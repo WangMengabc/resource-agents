@@ -168,8 +168,8 @@ Setting it to 0 will disable this behavior.
 <action name="demote"   timeout="30s" />
 <action name="notify"   timeout="30s" />
 <action name="stop"    timeout="30s" />
-<action name="monitor" depth="0"  timeout="20s" interval="29s" role="Slave" />
-<action name="monitor" depth="0"  timeout="20s" interval="60s" role="Master" />
+<action name="monitor" depth="0"  timeout="20s" interval="29s" role="Unpromoted" />
+<action name="monitor" depth="0"  timeout="20s" interval="60s" role="Promoted" />
 <action name="meta-data"  timeout="5s" />
 <action name="validate-all"  timeout="30s" />
 </actions>
@@ -205,7 +205,6 @@ sg_persist_init() {
     NODE=${NODE% *}
     
     MASTER_SCORE_ATTRIBUTE="${HA_SBIN_DIR}/crm_attribute --lifetime=reboot --name=$MASTER_SCORE_VAR_NAME --node=$NODE"
-    CRM_MASTER="${HA_SBIN_DIR}/crm_master --lifetime=reboot"
     PENDING_ATTRIBUTE="${HA_SBIN_DIR}/crm_attribute --lifetime=reboot --name=$PENDING_VAR_NAME --node=$NODE"
 
     NODE_ID_HEX=$(printf '0x%x' $NODE_ID_DEC)

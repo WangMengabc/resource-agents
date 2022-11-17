@@ -510,7 +510,6 @@ if test -z "$PYTHON"; then
     echo "*** Essential program python not found" 1>&2
 fi
 
-AC_PYTHON_MODULE(googleapiclient)
 AC_PYTHON_MODULE(json)
 AC_PYTHON_MODULE(pyroute2)
 
@@ -523,23 +522,29 @@ if test -z "$PYTHON" || test $BUILD_OCF_PY -eq 0; then
 fi
 AM_CONDITIONAL(BUILD_AZURE_EVENTS, test $BUILD_AZURE_EVENTS -eq 1)
 
+BUILD_AZURE_EVENTS_AZ=1
+if test -z "$PYTHON" || test $BUILD_OCF_PY -eq 0; then
+    BUILD_AZURE_EVENTS_AZ=0
+    AC_MSG_WARN("Not building azure-events-az")
+fi
+AM_CONDITIONAL(BUILD_AZURE_EVENTS_AZ, test $BUILD_AZURE_EVENTS_AZ -eq 1)
+
 BUILD_GCP_PD_MOVE=1
-if test -z "$PYTHON" || test "x${HAVE_PYMOD_GOOGLEAPICLIENT}" != xyes || test $BUILD_OCF_PY -eq 0; then
+if test -z "$PYTHON" || test $BUILD_OCF_PY -eq 0; then
     BUILD_GCP_PD_MOVE=0
     AC_MSG_WARN("Not building gcp-pd-move")
 fi
 AM_CONDITIONAL(BUILD_GCP_PD_MOVE, test $BUILD_GCP_PD_MOVE -eq 1)
 
 BUILD_GCP_VPC_MOVE_ROUTE=1
-if test -z "$PYTHON" || test "x${HAVE_PYMOD_GOOGLEAPICLIENT}" != xyes || \
-   test "x${HAVE_PYMOD_PYROUTE2}" != xyes || test $BUILD_OCF_PY -eq 0; then
+if test -z "$PYTHON" || test "x${HAVE_PYMOD_PYROUTE2}" != xyes || test $BUILD_OCF_PY -eq 0; then
     BUILD_GCP_VPC_MOVE_ROUTE=0
     AC_MSG_WARN("Not building gcp-vpc-move-route")
 fi
 AM_CONDITIONAL(BUILD_GCP_VPC_MOVE_ROUTE, test $BUILD_GCP_VPC_MOVE_ROUTE -eq 1)
 
 BUILD_GCP_VPC_MOVE_VIP=1
-if test -z "$PYTHON" || test "x${HAVE_PYMOD_GOOGLEAPICLIENT}" != xyes || test $BUILD_OCF_PY -eq 0; then
+if test -z "$PYTHON" || test $BUILD_OCF_PY -eq 0; then
     BUILD_GCP_VPC_MOVE_VIP=0
     AC_MSG_WARN("Not building gcp-vpc-move-vip")
 fi
@@ -976,6 +981,7 @@ rgmanager/Makefile						\
 
 dnl Files we output that need to be executable
 AC_CONFIG_FILES([heartbeat/azure-events], [chmod +x heartbeat/azure-events])
+AC_CONFIG_FILES([heartbeat/azure-events-az], [chmod +x heartbeat/azure-events-az])
 AC_CONFIG_FILES([heartbeat/AoEtarget], [chmod +x heartbeat/AoEtarget])
 AC_CONFIG_FILES([heartbeat/ManageRAID], [chmod +x heartbeat/ManageRAID])
 AC_CONFIG_FILES([heartbeat/ManageVE], [chmod +x heartbeat/ManageVE])
